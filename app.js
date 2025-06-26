@@ -8,10 +8,13 @@ const port = process.env.PORT || 3000;
 const clientesRoutes = require('./routes/clientes');
 const animaisRoutes = require('./routes/animais');
 const consultasRoutes = require('./routes/consultas');
+const authRoutes = require('./routes/auth');
+
 
 app.use(cors());
 app.use(express.json());
 
+app.use('/auth', authRoutes);
 app.use('/clientes', clientesRoutes);
 app.use('/animais', animaisRoutes);
 app.use('/consultas', consultasRoutes);

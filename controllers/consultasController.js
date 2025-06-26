@@ -51,9 +51,14 @@ exports.updateConsulta = async (req, res) => {
 exports.deleteConsulta = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM consultas WHERE id = $1 RETURNING *', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ mensagem: 'CONSULTA NÃO ENCONTRADA' });
-    res.json({ mensagem: 'Consulta deletada !' });
+    if (req.usuario.tipo !== 'admin') {
+      return res.status(403).json({ erro: 'Apenas admin pode remover' });
+    }
+    else {
+      const result = await pool.query('DELETE FROM consultas WHERE id = $1 RETURNING *', [id]);
+      if (result.rows.length === 0) return res.status(404).json({ mensagem: 'CONSULTA NÃO ENCONTRADA' });
+      res.json({ mensagem: 'Consulta deletada !' });
+    }
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }

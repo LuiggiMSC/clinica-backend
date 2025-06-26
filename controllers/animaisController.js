@@ -11,7 +11,7 @@ exports.getTodosAnimal = async (req, res) => {
         c.email AS cliente_email
       FROM animais a
       JOIN clientes c ON a.cliente_id = c.id
-    `); //se n fica impossivel de ler
+    `);
 
     // mapear resultado p agrupar dados do cliente
     const animaisComCliente = result.rows.map((row) => ({
@@ -76,9 +76,14 @@ exports.updateAnimal = async (req, res) => {
 exports.deleteAnimal = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM animais WHERE id = $1 RETURNING *', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ mensagem: 'NÃO ENCONTRADO' });
-    res.json({ mensagem: 'Animal deletado ' });
+    if (req.usuario.tipo !== 'admin') {
+      return res.status(403).json({ erro: 'Apenas administradores podem remover registros.' });
+    }
+    else {
+      const result = await pool.query('DELETE FROM animais WHERE id = $1 RETURNING *', [id]);
+      if (result.rows.length === 0) return res.status(404).json({ mensagem: 'NÃO ENCONTRADO' });
+      res.json({ mensagem: 'Animal deletado ' });
+    }
   } catch (err) {
     res.status(500).json({ erro: err.message });
   }
