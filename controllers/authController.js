@@ -1,8 +1,9 @@
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const JWT_SECRET = 'seu_segredo_super_secreto';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.login = async (req, res) => {
   const { email, senha } = req.body;
